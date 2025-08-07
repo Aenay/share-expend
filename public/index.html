@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#4CAF50">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <title>Shared Expense Tracker</title>
+</head>
+<body class="bg-gray-100">
+  <main class="container mx-auto px-4 py-8 max-w-md">
+    <h1 class="text-3xl font-bold text-center mb-8 text-green-600">Nay & Naing's Expense Tracker</h1>
+    
+    <!-- Balance Section -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-4">Current Balance</h2>
+      <p id="balance" class="text-2xl text-center font-bold">Loading...</p>
+    </div>
+
+    <!-- Add Transaction Form -->
+    <form id="expenseForm" class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-4">Add Transaction</h2>
+      
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Who Paid?</label>
+        <select id="payer" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="Nay">Nay</option>
+          <option value="Naing">Naing</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Amount</label>
+        <input type="number" id="amount" placeholder="Enter amount" required
+          class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Description</label>
+        <input type="text" id="description" placeholder="What was it for?" required
+          class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
+
+      <button type="submit" 
+        class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
+        Add Transaction
+      </button>
+    </form>
+
+    <!-- Transaction History -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold mb-4">Transaction History</h2>
+      <div id="transactions" class="space-y-3">
+        <!-- Transactions will be inserted here -->
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/src/app.js"></script>
+  <script>
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => console.log('ServiceWorker registered'))
+          .catch(err => console.log('ServiceWorker registration failed: ', err));
+      });
+    }
+  </script>
+</body>
+</html>
