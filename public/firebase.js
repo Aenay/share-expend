@@ -1,14 +1,17 @@
+// Import the Firebase SDK modules
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-import { getDatabase, ref, push, onValue, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  onSnapshot, 
+  serverTimestamp, 
+  query, 
+  orderBy 
+} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js';
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// 🔥 Your Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAO06E97AUdDogUOFe2DlcsifTLqx_FSP0",
   authDomain: "share-expense-21c82.firebaseapp.com",
@@ -20,41 +23,37 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const expensesRef = ref(db, 'expenses');
+// Initialize Firestore
+const db = getFirestore(app);
+const expensesRef = collection(db, "expenses");
 
-// Add new expense
+// ➕ Add a new expense
 export const addExpense = async (payer, amount, description) => {
   try {
-    await push(expensesRef, {
+    await addDoc(expensesRef, {
       payer,
       amount: parseFloat(amount),
       description,
-      timestamp: serverTimestamp()
+      createdAt: serverTimestamp()
     });
     return true;
   } catch (error) {
-    console.error('Error adding expense:', error);
+    console.error("Error adding expense:", error);
     return false;
   }
 };
 
-// Listen to expenses
+// 🔁 Listen for expense changes in real time
 export const onExpensesChange = (callback) => {
-  onValue(expensesRef, (snapshot) => {
-    const expenses = [];
-    snapshot.forEach((childSnapshot) => {
-      expenses.push({
-        id: childSnapshot.key,
-        ...childSnapshot.val()
-      });
-    });
-    // Sort by timestamp in descending order
-    expenses.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const q = query(expensesRef, orderBy("createdAt", "desc"));
+  onSnapshot(q, (snapshot) => {
+    const expenses = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
     callback(expenses);
   });
 };

@@ -50,9 +50,9 @@ onExpensesChange((expenses) => {
   // Update transaction history
   transactionsContainer.innerHTML = '';
   if (expenses.length === 0) {
-    transactionsContainer.innerHTML = '
+    transactionsContainer.innerHTML = `
       <p class="text-gray-500 text-center">No transactions yet</p>
-    ';
+    `;
     return;
   }
 
