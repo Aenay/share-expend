@@ -7,7 +7,9 @@ import {
   onSnapshot, 
   serverTimestamp, 
   query, 
-  orderBy 
+  orderBy, 
+  doc, 
+  deleteDoc 
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js';
 
@@ -56,4 +58,16 @@ export const onExpensesChange = (callback) => {
     }));
     callback(expenses);
   });
+};
+
+// ➖ Delete an expense
+export const deleteExpense = async (id) => {
+  try {
+    const expenseDoc = doc(db, "expenses", id);
+    await deleteDoc(expenseDoc);
+    return true;
+  } catch (error) {
+    console.error("Error deleting expense:", error);
+    return false;
+  }
 };

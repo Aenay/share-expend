@@ -46,38 +46,24 @@ export const formatDate = (timestamp) => {
 };
 
 // Create transaction element
-export const createTransactionElement = (transaction) => {
-  const { payer, amount, description, timestamp } = transaction;
-  const formattedAmount = formatCurrency(amount);
-  const formattedDate = formatDate(timestamp);
-  const splitAmount = amount / 2;
-  const formattedSplitAmount = formatCurrency(splitAmount);
-  
-  const element = document.createElement('div');
-  element.className = 'p-4 border rounded-lg ' + 
-    (payer === 'Nay' ? 'bg-green-50' : 'bg-blue-50');
-  
-  const otherPerson = payer === 'Nay' ? 'Naing' : 'Nay';
-  
-  element.innerHTML = `
-    <div class="flex justify-between items-start">
-      <div class="flex-grow">
-        <div class="flex justify-between items-center mb-1">
-          <p class="font-semibold ${payer === 'Nay' ? 'text-green-600' : 'text-blue-600'}">
-            ${payer} paid ${formattedAmount}
-          </p>
-          <span class="text-xs text-gray-500">${formattedDate}</span>
-        </div>
-        <p class="text-gray-600 text-sm mb-1">${description}</p>
-        <p class="text-sm text-gray-700">
-          Split: ${formattedSplitAmount} each
-          <span class="block text-xs ${payer === 'Nay' ? 'text-green-600' : 'text-blue-600'}">
-            ${otherPerson} needs to pay ${payer} ${formattedSplitAmount}
-          </span>
-        </p>
-      </div>
+export const createTransactionElement = (expense) => {
+  const isNay = expense.payer === 'Nay';
+  const transactionDiv = document.createElement('div');
+  transactionDiv.className = `flex justify-between items-center p-3 rounded-lg ${
+    isNay ? 'bg-blue-50' : 'bg-green-50'
+  }`;
+
+  transactionDiv.innerHTML = `
+    <div class="flex-grow">
+      <p class="font-semibold">${expense.description}</p>
+      <p class="text-sm text-gray-600">Paid by ${expense.payer}</p>
     </div>
+    <div class="text-right">
+      <p class="font-bold text-lg">${expense.amount.toFixed(2)}</p>
+      <p class="text-xs text-gray-500">${new Date(expense.createdAt?.seconds * 1000).toLocaleDateString()}</p>
+    </div>
+    <button data-id="${expense.id}" class="delete-btn text-red-500 hover:text-red-700 hover:underline ml-4">Delete</button>
   `;
-  
-  return element;
+
+  return transactionDiv;
 };

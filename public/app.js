@@ -1,4 +1,4 @@
-import { addExpense, onExpensesChange } from './firebase.js';
+import { addExpense, onExpensesChange, deleteExpense } from './firebase.js';
 import { calculateBalance, createTransactionElement } from './utils.js';
 
 // DOM Elements
@@ -60,6 +60,19 @@ onExpensesChange((expenses) => {
     const transactionElement = createTransactionElement(expense);
     transactionsContainer.appendChild(transactionElement);
   });
+});
+
+// Handle delete transaction
+transactionsContainer.addEventListener('click', async (e) => {
+  if (e.target.classList.contains('delete-btn')) {
+    const expenseId = e.target.dataset.id;
+    if (confirm('Are you sure you want to delete this transaction?')) {
+      const success = await deleteExpense(expenseId);
+      if (!success) {
+        alert('Failed to delete expense. Please try again.');
+      }
+    }
+  }
 });
 
 // Handle offline/online status
